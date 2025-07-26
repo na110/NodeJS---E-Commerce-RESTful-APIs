@@ -23,16 +23,15 @@ export async function register({ firstName, lastName, email, password }) {
       email,
       password: hashedPassword,
     });
-    newUser.save();
     return {
       message: "User created successfully",
       status: 201,
-      data: genrateJWT({ firstName, lastName, email }),
+      data: generateJWT({ firstName, lastName, email }),
     };
   } catch (error) {
     return {
       message: "Internal server error",
-      stauts: 500,
+      status: 500,
       error: error.message,
     };
   }
@@ -55,7 +54,9 @@ export async function logIn({ email, password }) {
         status: 400,
       };
     }
-
+    console.log("pass from user", password);
+    console.log("pass from database", user.password);
+    
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return {
@@ -66,8 +67,8 @@ export async function logIn({ email, password }) {
       return {
         message: "Login successful",
         status: 200,
-        data: genrateJWT({
-          firstName: user.firstName,
+        data: generateJWT({
+          lastName: user.firstName,
           lastNmae: user.lastName,
           email,
         }),
@@ -82,6 +83,6 @@ export async function logIn({ email, password }) {
   }
 }
 
-function genrateJWT(data) {
+function generateJWT(data) {
   return jwt.sign(data, "2vKf9ggZQDC1FICHSjVJwBkAukzv9l9S");
 }
